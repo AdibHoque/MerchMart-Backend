@@ -48,6 +48,8 @@ async function run() {
       const category = req.query.category || "";
       const priceRange = req.query.priceRange || "";
       const brand = req.query.brand || "";
+      const search = req.query.search || "";
+
       let filter = {};
 
       if (category) {
@@ -63,6 +65,9 @@ async function run() {
         filter.brand = brand;
       }
 
+      if (search.trim() !== "") {
+        filter.productName = { $regex: search, $options: "i" };
+      }
       const page = parseInt(req.query.page) || 1;
       const limit = 9;
       const skip = (page - 1) * limit;
