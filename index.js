@@ -47,6 +47,7 @@ async function run() {
 
       const category = req.query.category || "";
       const priceRange = req.query.priceRange || "";
+      const brand = req.query.brand || "";
       let filter = {};
 
       if (category) {
@@ -56,6 +57,10 @@ async function run() {
       if (priceRange) {
         const [minPrice, maxPrice] = priceRange.split("-").map(Number);
         filter.price = { $gte: minPrice, $lte: maxPrice };
+      }
+
+      if (brand) {
+        filter.brand = brand;
       }
 
       const page = parseInt(req.query.page) || 1;
