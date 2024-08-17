@@ -45,12 +45,19 @@ async function run() {
         sortOption.createdAt = -1;
       }
 
+      const category = req.query.category || "";
+      let filter = {};
+
+      if (category) {
+        filter.category = category.split('-').join(' ');
+      }
+
       const page = parseInt(req.query.page) || 1;
       const limit = 9;
       const skip = (page - 1) * limit;
 
-      const total = await Collection.countDocuments();
-      const cursor = Collection.find().sort(sortOption).skip(skip).limit(limit);
+      const total = await Collection.countDocuments(filter);
+      const cursor = Collection.find(filter).sort(sortOption).skip(skip).limit(limit);
       const result = await cursor.toArray();
 
 
