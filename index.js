@@ -34,10 +34,20 @@ async function run() {
     // await client.connect();
     const Collection = client.db('Merchmart').collection('Products');
     app.get("/products", async (req, res) => {
-      const cursor = Collection.find();
+      const page = parseInt(req.query.page) || 1;
+      const limit = 10;
+      const skip = (page - 1) * limit;
+
+      const cursor = Collection.find().skip(skip).limit(limit);
       const result = await cursor.toArray();
-      const total = await Collection.countDocuments()
-      const data = { totalProducts: total, data: result }
+      const total = await Collection.countDocuments();
+
+      const data = {
+        totalProducts: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        products: result
+      };
       console.log(total)
       res.send(data);
     })
