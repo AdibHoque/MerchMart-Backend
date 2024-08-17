@@ -34,13 +34,25 @@ async function run() {
     // await client.connect();
     const Collection = client.db('Merchmart').collection('Products');
     app.get("/products", async (req, res) => {
+      const sort = req.query.sort || "";
+      let sortOption = {};
+
+      if (sort === "priceAsc") {
+        sortOption.price = 1;
+      } else if (sort === "priceDesc") {
+        sortOption.price = -1;
+      } else if (sort === "newest") {
+        sortOption.createdAt = -1;
+      }
+
       const page = parseInt(req.query.page) || 1;
-      const limit = 10;
+      const limit = 9;
       const skip = (page - 1) * limit;
 
-      const cursor = Collection.find().skip(skip).limit(limit);
-      const result = await cursor.toArray();
       const total = await Collection.countDocuments();
+      const cursor = Collection.find().sort(sortOption).skip(skip).limit(limit);
+      const result = await cursor.toArray();
+
 
       const data = {
         totalProducts: total,
