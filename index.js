@@ -46,10 +46,16 @@ async function run() {
       }
 
       const category = req.query.category || "";
+      const priceRange = req.query.priceRange || "";
       let filter = {};
 
       if (category) {
         filter.category = category.split('-').join(' ');
+      }
+
+      if (priceRange) {
+        const [minPrice, maxPrice] = priceRange.split("-").map(Number);
+        filter.price = { $gte: minPrice, $lte: maxPrice };
       }
 
       const page = parseInt(req.query.page) || 1;
@@ -59,7 +65,6 @@ async function run() {
       const total = await Collection.countDocuments(filter);
       const cursor = Collection.find(filter).sort(sortOption).skip(skip).limit(limit);
       const result = await cursor.toArray();
-
 
       const data = {
         totalProducts: total,
