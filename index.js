@@ -36,7 +36,10 @@ async function run() {
     app.get("/products", async (req, res) => {
       const cursor = Collection.find();
       const result = await cursor.toArray();
-      res.send(result);
+      const total = await Collection.countDocuments()
+      const data = { totalProducts: total, data: result }
+      console.log(total)
+      res.send(data);
     })
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
